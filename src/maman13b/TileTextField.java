@@ -5,7 +5,6 @@
  */
 package maman13b;
 
-import java.awt.Color;
 import java.awt.event.ActionListener;
 import javax.swing.JTextField;
 
@@ -14,10 +13,10 @@ import javax.swing.JTextField;
  * @author elira
  */
 public class TileTextField extends JTextField {
-    private Tile tile;
-    private Color immutableTileColor;
-    private Color mutableTileColor;
-    private TileTextFieldState tileTextFieldState;
+    public static final String DEFAULT_TILE_VALUE = "";
+    private int row;
+    private int column;
+    private boolean isLocked;
     
     /**
      * Empty constructor.
@@ -26,11 +25,9 @@ public class TileTextField extends JTextField {
      * Default state is SETTING_IMMUTABLE_VALUE
      */
     public TileTextField() {
-        this.tile = new Tile();
-        setTile(this.tile);
-        setTileTextFieldState(TileTextFieldState.SETTING_IMMUTABLE_VALUE);
-        setImmutableTileColor(Color.GRAY);
-        setMutableTileColor(Color.WHITE);   
+        row = column = 0;
+        this.isLocked = false;
+        setHorizontalAlignment(CENTER);
     }
     
     /**
@@ -44,110 +41,94 @@ public class TileTextField extends JTextField {
     
     /**
      * Constructor
-     * @param tile Tile object
+     * @param row tile row
+     * @param column tile column
      * @param listener Action listener object
      */
-    public TileTextField(Tile tile, ActionListener listener) {
+    public TileTextField(int row, int column, ActionListener listener) {
         this(listener);
-        this.tile = tile;
-        setTile(this.tile);
+        this.row = row;
+        this.column = column;
+    }
+
+    /**
+     * Get the tile row number
+     * @return int row number
+     */
+    public int getRow() {
+        return this.row;
     }
     
     /**
-     * Constructor
-     * @param tile Tile object
-     * @param immutableTileColor Color of the immutable tiles
-     * @param mutableTileColor Color of the mutable tiles
-     * @param tileTextFieldState tile text field state
-     * @param listener Action listener object
+     * Get the tile column number
+     * @return int column number
      */
-    public TileTextField(Tile tile, Color immutableTileColor, 
-            Color mutableTileColor, TileTextFieldState tileTextFieldState,
-            ActionListener listener) {
-        this(tile, listener);
-        setImmutableTileColor(immutableTileColor);
-        setMutableTileColor(mutableTileColor);
-        this.tileTextFieldState = tileTextFieldState;
+    public int getColumn() {
+        return this.column;
     }
     
     /**
-     * Get the represented tile
-     * @return Tile object
+     * Set the tile row
+     * @param row int row
      */
-    public Tile getTile() {
-        return this.tile;
+    public void setRow(int row) {
+        this.row = row;
     }
     
     /**
-     * Get immutable tile color
-     * @return Color object
+     * Set the tile column
+     * @param column int column
      */
-    public Color getImmutableTileColor() {
-        return this.immutableTileColor;
+    public void setColumn(int column) {
+        this.column = column;
     }
     
     /**
-     * Get mutable tile color
-     * @return Color object
+     * Get indication if the tile is locked
+     * @return true if locked, false otherwise
      */
-    public Color getMutableTileColor() {
-        return this.mutableTileColor;
+    public boolean isLocked() {
+        return isLocked;
     }
     
     /**
-     * Get tile state
-     * @return TileTextFieldState
+     * Get indication if the tile is filled with a value
+     * @return true if filled, false otherwise
      */
-    public TileTextFieldState getTileTextFieldState() {
-        return this.tileTextFieldState;
+    public boolean isFilled() {
+        return !getText().isEmpty();
     }
     
     /**
-     * Set the tile
-     * @param tile Tile object
+     * Lock tile
      */
-    public void setTile(Tile tile) {
-        this.tile = tile;
-        setText(tile.getValue());
+    public void lockTile() {
+        this.isLocked = true;
+        setEnabled(false);
     }
     
     /**
-     * Set the immutable tiles color
-     * @param immutableTileColor Color object
+     * Unlock tile
      */
-    public void setImmutableTileColor(Color immutableTileColor) {
-        this.immutableTileColor = immutableTileColor;
-        if(this.tileTextFieldState != TileTextFieldState.SETTING_MUTABLE_VALUE) {
-            setBackground(this.immutableTileColor);
-        }
+    public void unlockTile() {
+        this.isLocked = false;
+        setEnabled(true);
     }
     
     /**
-     * Set the mutable tile color
-     * @param mutableTileColor Color object
+     * Clear tile
      */
-    public void setMutableTileColor(Color mutableTileColor) {
-        this.mutableTileColor = mutableTileColor;
-        if(this.tileTextFieldState == TileTextFieldState.SETTING_MUTABLE_VALUE) {
-            setBackground(mutableTileColor);
-        }
+    public void clearTile() {
+        unlockTile();
+        setText(DEFAULT_TILE_VALUE);
     }
     
-    /**
-     * Set tile state
-     * @param tileTextFieldState 
-     */
-    public void setTileTextFieldState(TileTextFieldState tileTextFieldState) {
-        this.tileTextFieldState = tileTextFieldState;
-        setBackground(tileTextFieldState != 
-                TileTextFieldState.SETTING_MUTABLE_VALUE ? this.immutableTileColor : this.mutableTileColor);
-    }
-    
-    /**
-     * Set tile value
-     * @param value 
-     */
-    public void setText(int value) {
-        setText(value == 0 ? "" : Integer.toString(value));
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || !(obj instanceof TileTextField)) return false;
+        
+        TileTextField tile = (TileTextField) obj;
+        return getText().equals(tile.getText()) && this.row == tile.getRow() && 
+                this.column == tile.getColumn();
     }
 }

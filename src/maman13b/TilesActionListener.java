@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  */
 public class TilesActionListener implements ActionListener {
     private final int INVALID_TEXTFIELD_VALUE = 0;
-    private ArrayList<Tile> tiles;
+    private ArrayList<TileTextField> tiles;
     
     /**
      * Empty constructor
@@ -29,7 +29,7 @@ public class TilesActionListener implements ActionListener {
      * Constructor
      * @param tiles 
      */
-    public TilesActionListener(ArrayList<Tile> tiles) {
+    public TilesActionListener(ArrayList<TileTextField> tiles) {
         this.tiles = tiles;
     }
     
@@ -37,7 +37,7 @@ public class TilesActionListener implements ActionListener {
      * Get tiles
      * @return Array list of tiles
      */
-    public ArrayList<Tile> getTiles() {
+    public ArrayList<TileTextField> getTiles() {
         return this.tiles;
     }
     
@@ -45,8 +45,16 @@ public class TilesActionListener implements ActionListener {
      * Set tiles
      * @param tiles Array list of tiles
      */
-    public void setTiles(ArrayList<Tile> tiles) {
+    public void setTiles(ArrayList<TileTextField> tiles) {
         this.tiles = tiles;
+    }
+    
+    /**
+     * Add tile to the listener
+     * @param tile 
+     */
+    public void addTile(TileTextField tile) {
+        this.tiles.add(tile);
     }
     
     @Override
@@ -58,67 +66,39 @@ public class TilesActionListener implements ActionListener {
         
         // Validate input value
         TileTextField tile = (TileTextField) source;
-        int value = validateTile(tile);
-        if(value != INVALID_TEXTFIELD_VALUE) {
-            tile.getTile().setValue(value); // Set tile if valid
-        }
-        else {
-            tile.setText(Integer.toString(value)); // Restore value if invalid
+        if(!validateTile(tile)) {
+            tile.clearTile();
             JOptionPane.showMessageDialog(tile, "Set invalid tile value!");
         }
     }
     
     /**
      * Validate tile
-     * @param textTile
+     * @param tile
      * @return The argument value in valid (1-9 number), INVALID_TEXTFIELD_VALUE otherwise
      */
-    private int validateTile(TileTextField textTile) {
-        // Validate tile value
-        int value = validateTileValue(textTile.getText());
-        if(value == INVALID_TEXTFIELD_VALUE) {
-            return INVALID_TEXTFIELD_VALUE;
-        }
-        
+    private boolean validateTile(TileTextField tile) {
         // Validate tile row & column
-        return validateTileRow(value, textTile.getTile()) &&
-                validateTileColumn(value, textTile.getTile()) ?
-                value
-                : INVALID_TEXTFIELD_VALUE;
+        return validateTileValue(tile.getText()) &&
+                validateTileRow(tile) &&
+                validateTileColumn(tile);
     }
     
     /**
      * Validate tile value
-     * @param text text field's text
+     * @param value text field value
      * @return The argument value in valid (1-9 number), INVALID_TEXTFIELD_VALUE otherwise
      */
-    private int validateTileValue(String text) {
-        try {
-            int value = Integer.parseInt(text);
-            if(value > 0 && value < 10) {
-                return value;
-            }
-            else {
-                return INVALID_TEXTFIELD_VALUE;
-            }
-        }
-        catch(NumberFormatException e) {
-            return INVALID_TEXTFIELD_VALUE;
-        }
+    private boolean validateTileValue(String value) {
+        return value.length() == 1 && Character.isDigit(value.charAt(0));
     }
     
-    /**
-     * Validate tile's row
-     * @param value tile's potential value
-     * @param tile tile
-     * @return true if tile is valid, false otherwise
-     */
-    private boolean validateTileRow(int value, Tile tile) {
-        for(Tile tileInMatrix : tiles) {
+    private boolean validateTileRow(TileTextField tile) {
+        for(TileTextField tileInMatrix : tiles) {
             // If there is a tile in the row (which is not the changed tile)
             // and its value equals the changed value, return false
             if(!tile.equals(tileInMatrix) && tile.getRow() == tileInMatrix.getRow()
-                    && value == tileInMatrix.getValue()) {
+                    && tile.getText().equals(tileInMatrix.getText())) {
                 return false;
             }
         }
@@ -127,23 +107,17 @@ public class TilesActionListener implements ActionListener {
         return true;
     }
     
-    /**
-     * Validate tile's column
-     * @param value tile's potential value
-     * @param tile tile
-     * @return true if tile is valid, false otherwise
-     */
-    private boolean validateTileColumn(int value, Tile tile) {
-        for(Tile tileInMatrix : tiles) {
-            // If there is a tile in the column (which is not the changed tile)
+    private boolean validateTileColumn(TileTextField tile) {
+        for(TileTextField tileInMatrix : tiles) {
+            // If there is a tile in the row (which is not the changed tile)
             // and its value equals the changed value, return false
-            if(!tile.equals(tileInMatrix) && tile.getColumn()== tileInMatrix.getColumn()
-                    && value == tileInMatrix.getValue()) {
+            if(!tile.equals(tileInMatrix) && tile.getColumn() == tileInMatrix.getColumn()
+                    && tile.getText().equals(tileInMatrix.getText())) {
                 return false;
             }
         }
         
-        // No tiles have the same value in the column
+        // No tiles have the same value in the row
         return true;
     }
 }
