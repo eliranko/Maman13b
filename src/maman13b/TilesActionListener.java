@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package maman13b;
 
 import java.awt.event.ActionEvent;
@@ -10,12 +5,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author elira
- */
 public class TilesActionListener implements ActionListener {
-    private final int INVALID_TEXTFIELD_VALUE = 0;
+    private final int INVALID_TILE_VALUE = 0;
     private ArrayList<TileTextField> tiles;
     
     /**
@@ -66,9 +57,9 @@ public class TilesActionListener implements ActionListener {
         
         // Validate input value
         TileTextField tile = (TileTextField) source;
-        if(!validateTile(tile)) {
+        if(!validateTile(tile)) { // If tile is invalid
             tile.clearTile();
-            JOptionPane.showMessageDialog(tile, "Set invalid tile value!");
+            JOptionPane.showMessageDialog(tile, "Invalid tile value!");
         }
     }
     

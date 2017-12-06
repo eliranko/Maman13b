@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package maman13b;
 
 import java.awt.Color;
@@ -14,10 +9,6 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-/**
- *
- * @author elira
- */
 public class SudokuPanel extends JPanel implements ActionListener {
     private final Color EVEN_BLOCK_COLOR = Color.WHITE;
     private final Color ODD_BLOCK_COLOR = Color.GRAY;
@@ -60,22 +51,29 @@ public class SudokuPanel extends JPanel implements ActionListener {
             }
         }
         
-        setButton.setEnabled(false);
+        setButton.setEnabled(false); // Disable button
     }
     
     private void clearButtonClicked() {
         for(TileTextField tile : this.tiles) {
             tile.clearTile();
         }
-        setButton.setEnabled(true);
+        setButton.setEnabled(true); // Enable set button
     }
     
+    /**
+     * Build the panel
+     */
     private void createSudokuWindow() {
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(createGridPanel());
         add(createFormButtons());
     }
     
+    /**
+     * Build the sudoku part
+     * @return JPanel containing the sudoku
+     */
     private JPanel createGridPanel() {
         JPanel gridPanel = new JPanel();
         gridPanel.setLayout(new GridLayout(NUMBER_OF_ROWS, NUMBER_OF_COLUMNS));
