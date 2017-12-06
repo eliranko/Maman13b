@@ -9,12 +9,8 @@ package maman13b;
  *
  * @author elira
  */
-public class Maman13b {
-    private static final int NUM_OF_ROWS = 9;
-    private static final int NUM_OF_COLUMNS = 9;
-    
-    public static void main(String[] args) {
-        
-    }
-    
+public enum TileTextFieldState {
+    SETTING_IMMUTABLE_VALUE,
+    SET_IMMUTABLE_VALUE,
+    SETTING_MUTABLE_VALUE
 }
